@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Healthcare Landing Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <div class="logo"><a>Logo</a></div>
+        <ul class="navbar">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div id="buttonContainer">
+            <button id="login" style="display: none;">Login</button>
+            <button id="logout" style="display: none;">Logout</button>
+        </div>
+    </nav>
+    <header>
+        <div class="container">
+            <h1>Welcome to HealthCare</h1>
+            <p>Your health is our priority</p>
+            <a href="#services" class="cta-button">Explore Services</a>
+        </div>
+    </header>
+    
+    <section id="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="service-card">
+                <h3>General Checkup</h3>
+                <p>Regular checkups to keep you healthy.</p>
+                <a href="#" class="service-button">Learn More</a>
+            </div>
+            <div class="service-card">
+                <h3>Emergency Care</h3>
+                <p>24/7 emergency services for urgent needs.</p>
+                <a href="#" class="service-button">Learn More</a>
+            </div>
+            <div class="service-card">
+                <h3>Specialized Treatments</h3>
+                <p>Expert care for specific health issues.</p>
+                <a href="#" class="service-button">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 HealthCare. All rights reserved.</p>
+    </footer>
+    <script>
+        const loginButton = document.getElementById('login');
+    const logoutButton = document.getElementById('logout');
+    const API_URL = 'http://localhost:5000/api/routes';
+
+    // Function to check token validity and update button visibility
+    async function checkLoginStatus() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            displayLoginButton();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/loggedInStatus`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token
+                }
+            });
+
+            const isLoggedIn = await response.json();
+            if (isLoggedIn) {
+                displayLogoutButton();
+            } else {
+                displayLoginButton();
+            }
+        } catch (error) {
+            console.error("Error checking login status:", error);
+            displayLoginButton();
+        }
+    }
+
+    // Show Login button, hide Logout button
+    function displayLoginButton() {
+        loginButton.style.display = 'block';
+        logoutButton.style.display = 'none';
+    }
+
+    // Show Logout button, hide Login button
+    function displayLogoutButton() {
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+    }
+
+    // Event listener for login and logout actions
+    loginButton.addEventListener('click', () => {
+        window.location.href = 'signup/signup.html';  // Redirect to login page
+    });
+
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('token');  // Remove token from local storage
+        displayLoginButton();  // Update button visibility
+    });
+
+    // Run on page load
+    window.addEventListener('load', checkLoginStatus);
+    </script>
+</body>
+</html>
